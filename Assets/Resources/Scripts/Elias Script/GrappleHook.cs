@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using StarterAssets;
 using UnityEngine;
 
@@ -10,14 +8,26 @@ public class GrappleHook : MonoBehaviour
     private ThirdPersonController _cMovement;
     [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask();
     [SerializeField] private Transform debugHitpointTransform;
+    [SerializeField] private Transform grappleTransform;
+    private float grappleshotSize;
+    
     private State _state;
-    private Vector3 grapplePosition;
+    private Vector3 _grapplePosition;
     [SerializeField] private float reachedGrapplePosition;
+    [SerializeField] private float grappleLenght;
+    [SerializeField] float grappleSpeedMultiplier = 2f;
     
     private enum State
     {
         Normal,
-        GrappleflyingPlayer
+        GrappleThrown,
+        GrappleflyingPlayer,
+        
+    }
+
+    private void Awake()
+    {
+        grappleTransform.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -31,14 +41,21 @@ public class GrappleHook : MonoBehaviour
         switch (_state)
         {
             default:
+                
                 case State.Normal:
+                _cMovement.enabled = true;
                 GrappleStart();
-                break;
-            case State.GrappleflyingPlayer:
+                    break;
+            
+                case State.GrappleThrown:
+                    GrappleThrown();
+                    break;
+                
+                case State.GrappleflyingPlayer:
+                _cMovement.enabled = false;
                 GrappleMovement();
-                break;
+                    break;
         }
-        
         
         GrappleStart();
     }
@@ -50,38 +67,49 @@ public class GrappleHook : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (Physics.Raycast(ray, out  RaycastHit raycastHit, 999f, aimColliderLayerMask))
+            if (Physics.Raycast(ray, out  RaycastHit raycastHit, grappleLenght, aimColliderLayerMask))
             {
                 debugHitpointTransform.position = raycastHit.point;
-                grapplePosition = raycastHit.point;
-                _state = State.GrappleflyingPlayer;
+                _grapplePosition = raycastHit.point;
+                grappleshotSize = 0f;
+                grappleTransform.gameObject.SetActive(true);
+                grappleTransform.localScale = Vector3.zero;
+                _state = State.GrappleThrown;
             }  
         }
     }
 
+
+    private void GrappleThrown()
+    {
+        grappleTransform.LookAt(_grapplePosition);
+
+        float grappleThrowSpeed = 40f;
+        grappleshotSize += grappleThrowSpeed * Time.deltaTime;
+        grappleTransform.localScale = new Vector3(0.5f, 0.5f, grappleshotSize);
+
+
+        if (grappleshotSize >= Vector3.Distance(transform.position, _grapplePosition))
+        {
+            _state = State.GrappleflyingPlayer;
+        }
+    }
     
     private void GrappleMovement()
     {
-        Vector3 grappleDir = (grapplePosition - transform.position).normalized;
+        Vector3 grappleDir = (_grapplePosition - transform.position).normalized;
 
         float grappleSpeedMin = 10f;
         float grappleSpeedMax = 40f;
-        float grappleSpeed = Mathf.Clamp(Vector3.Distance(transform.position, grapplePosition), grappleSpeedMin, grappleSpeedMax);
-        float grapplSpeedMultiplier = 2f;
+        float grappleSpeed = Mathf.Clamp(Vector3.Distance(transform.position, _grapplePosition), grappleSpeedMin, grappleSpeedMax);
+
+        _cInput.Move(grappleDir * grappleSpeed *  grappleSpeedMultiplier * Time.deltaTime);
         
-        _cInput.Move(grappleDir * grappleSpeed *  grapplSpeedMultiplier * Time.deltaTime);
-        
-        if (Vector3.Distance(transform.position, grapplePosition) < reachedGrapplePosition)
+        if (Vector3.Distance(transform.position, _grapplePosition) < reachedGrapplePosition)
         {
+            grappleTransform.gameObject.SetActive(false);
             _state = State.Normal;
-            ResetGravity();
         }
-
-    }
-
-    private void ResetGravity()
-    {
-        _cMovement._verticalVelocity = 0f;
     }
 
 }
