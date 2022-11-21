@@ -7,7 +7,8 @@ public class GrappleHook : MonoBehaviour
     private CharacterController _cInput;
     private ThirdPersonController _cMovement;
     [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask();
-    [SerializeField] private Transform debugHitpointTransform;
+    [SerializeField] private Transform grappleIndicatorPos;
+    [SerializeField] private GameObject grappleIndicator;
     [SerializeField] private Transform grappleTransform;
     private float grappleshotSize;
     
@@ -56,7 +57,8 @@ public class GrappleHook : MonoBehaviour
                 GrappleMovement();
                     break;
         }
-        
+
+        CanGrapple();
         GrappleStart();
     }
 
@@ -69,7 +71,6 @@ public class GrappleHook : MonoBehaviour
         {
             if (Physics.Raycast(ray, out  RaycastHit raycastHit, grappleLenght, aimColliderLayerMask))
             {
-                debugHitpointTransform.position = raycastHit.point;
                 _grapplePosition = raycastHit.point;
                 grappleshotSize = 0f;
                 grappleTransform.gameObject.SetActive(true);
@@ -109,6 +110,23 @@ public class GrappleHook : MonoBehaviour
         {
             grappleTransform.gameObject.SetActive(false);
             _state = State.Normal;
+        }
+    }
+
+
+    private void CanGrapple()
+    {
+        Vector3 crossHairPoint = new Vector3(Screen.width / 2f - 30f, Screen.height / 2f + 30f, 0f);
+        Ray ray = Camera.main.ScreenPointToRay(crossHairPoint);
+
+        if (Physics.Raycast(ray, out RaycastHit raycastHit, grappleLenght, aimColliderLayerMask))
+        {
+            grappleIndicator.SetActive(true);
+            grappleIndicatorPos.position = raycastHit.point;
+        }
+        else
+        {
+            grappleIndicator.SetActive(false);
         }
     }
 
