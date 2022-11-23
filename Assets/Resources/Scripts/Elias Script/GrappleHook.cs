@@ -11,7 +11,6 @@ public class GrappleHook : MonoBehaviour
     [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask();
     [SerializeField] private Transform grappleIndicatorPos;
     [SerializeField] private GameObject grappleIndicator;
-    [SerializeField] private Transform grappleTransform;
     private float grappleshotSize;
 
     [Header("Grapple attributes")]
@@ -33,7 +32,7 @@ public class GrappleHook : MonoBehaviour
 
     private void Awake()
     {
-        grappleTransform.gameObject.SetActive(false);
+        //grappleTransform.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -49,7 +48,7 @@ public class GrappleHook : MonoBehaviour
             default:
                 
                 case State.Normal:
-                _cMovement.enabled = true;
+                //_cMovement.enabled = true;
                 GrappleStart();
                     break;
             
@@ -58,7 +57,7 @@ public class GrappleHook : MonoBehaviour
                     break;
                 
                 case State.GrappleflyingPlayer:
-                _cMovement.enabled = false;
+                //_cMovement.enabled = false;
                 GrappleMovement();
                     break;
         }
@@ -82,8 +81,8 @@ public class GrappleHook : MonoBehaviour
                 _grapplePosition = raycastHit.point;
 
                 grappleshotSize = 0f;
-                grappleTransform.gameObject.SetActive(true);
-                grappleTransform.localScale = Vector3.zero;
+                //grappleTransform.gameObject.SetActive(true);
+                //grappleTransform.localScale = Vector3.zero;
                 _state = State.GrappleThrown;
             }
         }
@@ -93,7 +92,7 @@ public class GrappleHook : MonoBehaviour
     
     private void GrappleThrown()
     {
-        grappleTransform.LookAt(_grapplePosition);
+        //grappleTransform.LookAt(_grapplePosition);
 
         float grappleThrowSpeed = 40f;
         grappleshotSize += grappleThrowSpeed * Time.deltaTime;
@@ -101,7 +100,7 @@ public class GrappleHook : MonoBehaviour
         
         if (grappleshotSize < Vector3.Distance(transform.position, _grapplePosition))
         {
-            grappleTransform.localScale = new Vector3(0.5f, 0.5f, grappleshotSize);
+            //grappleTransform.localScale = new Vector3(0.5f, 0.5f, grappleshotSize);
         }
 
         if (grappleshotSize >= Vector3.Distance(transform.position, _grapplePosition))
@@ -122,7 +121,7 @@ public class GrappleHook : MonoBehaviour
         
         if (Vector3.Distance(transform.position, _grapplePosition) < reachedGrapplePosition || Input.GetKeyUp(grappleKey))
         {
-            grappleTransform.gameObject.SetActive(false);
+            //grappleTransform.gameObject.SetActive(false);
             _state = State.Normal;
         }
     }
@@ -136,12 +135,12 @@ public class GrappleHook : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit raycastHit, grappleLenght, aimColliderLayerMask))
         {
-            grappleIndicator.SetActive(true);
+            //grappleIndicator.SetActive(true);
             grappleIndicatorPos.position = raycastHit.point;
         }
         else
         {
-            grappleIndicator.SetActive(false);
+            //grappleIndicator.SetActive(false);
         }
     }
 
