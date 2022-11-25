@@ -16,13 +16,15 @@ public class GrapplingGun : MonoBehaviour
   [SerializeField] private Transform grappleIndicatorPos;
   [SerializeField] private GameObject grappleIndicator;
   
+  [SerializeField] private Rigidbody rb;
+  [SerializeField] private GameObject rbParent;
 
-  [SerializeField] private GameObject rigidParent;
-  [SerializeField] private GameObject playerParent;
 
   [SerializeField] private float spring = 0;
   [SerializeField] private float damper = 0;
   [SerializeField] private float massScale = 0;
+
+  public bool swinging;
 
   private void Awake()
   {
@@ -32,6 +34,8 @@ public class GrapplingGun : MonoBehaviour
     
     _cMovement = GetComponent<ThirdPersonController>();
   }
+
+
 
 
   private void Update()
@@ -73,7 +77,7 @@ public class GrapplingGun : MonoBehaviour
       float distanceFromPoint = Vector3.Distance(player.position, grapplePoint);
 
       Joint.maxDistance = distanceFromPoint * 0.2f;
-      Joint.minDistance = distanceFromPoint * 0.05f;
+      Joint.minDistance = distanceFromPoint * 0.1f;
 
 
       Joint.spring = spring;
@@ -81,9 +85,10 @@ public class GrapplingGun : MonoBehaviour
       Joint.massScale = massScale;
 
       lr.positionCount = 2;
-      playerParent.transform.parent = rigidParent.transform;
       
       _cMovement.enabled = false;
+      rb.useGravity = true;
+      gameObject.transform.parent = rbParent.transform;
     }
   }
 
@@ -98,9 +103,11 @@ public class GrapplingGun : MonoBehaviour
   
   private void StopGrapple()
   {
+    gameObject.transform.parent = null;
     lr.positionCount = 0;
     Destroy(Joint);
     _cMovement.enabled = true;
+    rb.useGravity = false;
   }
 
 
