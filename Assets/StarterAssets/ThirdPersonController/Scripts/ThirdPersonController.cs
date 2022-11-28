@@ -111,6 +111,8 @@ namespace StarterAssets
         private bool _hasAnimator;
 
         [SerializeField] private AudioSource jumpSoundEffect; 
+        
+        private GrapplingGun _grapplingGun;
 
         private bool IsCurrentDeviceMouse
         {
@@ -136,6 +138,8 @@ namespace StarterAssets
 
         private void Start()
         {
+            _grapplingGun = GetComponent<GrapplingGun>();
+            
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
             
             _hasAnimator = TryGetComponent(out _animator);
@@ -160,7 +164,12 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
-            Move();
+            
+            if (_grapplingGun.swinging == false)
+            {
+                Move();
+            }
+            
         }
 
         private void LateUpdate()
