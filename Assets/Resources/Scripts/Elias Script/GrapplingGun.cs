@@ -10,7 +10,8 @@ public class GrapplingGun : MonoBehaviour
   [SerializeField] private Transform gunTip, player;
   [SerializeField] private float grappleLenght;
   private SpringJoint _joint;
-  
+
+  private CharacterController _cInput;
   private ThirdPersonController _cMovement;
   [SerializeField] private Transform grappleIndicatorPos;
   [SerializeField] private GameObject grappleIndicator;
@@ -31,7 +32,8 @@ public class GrapplingGun : MonoBehaviour
     _lr = GetComponent<LineRenderer>();
     
     Physics.IgnoreLayerCollision(6, 8);
-    
+
+    _cInput = GetComponent<CharacterController>();
     _cMovement = GetComponent<ThirdPersonController>();
     swinging = false;
   }
@@ -42,12 +44,12 @@ public class GrapplingGun : MonoBehaviour
   private void Update()
   {
 
-    if (Input.GetMouseButtonDown(0))
+    if (Input.GetKeyDown(KeyCode.E))
     {
       rbParent.transform.parent = null;
       StartGrapple();
     }
-    else if (Input.GetMouseButtonUp(0))
+    else if (Input.GetKeyUp(KeyCode.E))
     {
       StopGrapple();
       rb.transform.position = gunTip.transform.position;
@@ -93,6 +95,7 @@ public class GrapplingGun : MonoBehaviour
       rb.useGravity = true;
       swinging = true;
       _cMovement.Gravity = 0;
+      _cInput.enabled = false;
       
       
       gameObject.transform.parent = rbParent.transform;
@@ -117,6 +120,8 @@ public class GrapplingGun : MonoBehaviour
     rb.useGravity = false;
     swinging = false;
     _cMovement.Gravity = -15f;
+    rb.velocity = new Vector3(0, 0, 0);
+    _cInput.enabled = true;
   }
 
 
