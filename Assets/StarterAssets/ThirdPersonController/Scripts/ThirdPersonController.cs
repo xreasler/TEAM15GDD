@@ -74,6 +74,9 @@ namespace StarterAssets
 
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
+        
+        private bool swapAttack;
+        public GameObject weapon;
 
         public float Health { get; set; }
 
@@ -150,6 +153,7 @@ namespace StarterAssets
             _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
             _playerInput = GetComponent<PlayerInput>();
+            weapon.SetActive(false);
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
@@ -411,15 +415,33 @@ namespace StarterAssets
             }
         }
 
+        public void returnWeapon()
+        {
+            weapon.SetActive(false);
+        }
+
         public void Attack()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && swapAttack)
             {
-                
+               weapon.SetActive(true);
+                swapAttack = !swapAttack;
                 _animator.Play("Attack");
+                Invoke("returnWeapon",2 );
 
 
             }
+            if (Input.GetMouseButtonDown(0) && !swapAttack)
+            {
+                weapon.SetActive(true);
+                swapAttack = !swapAttack;
+                _animator.Play("Attack2");
+                Invoke("returnWeapon",2 );
+
+
+            }
+            
+            
         }
 
         
