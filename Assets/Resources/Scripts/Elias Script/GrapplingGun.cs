@@ -32,7 +32,7 @@ public class GrapplingGun : MonoBehaviour
     _lr = GetComponent<LineRenderer>();
     
     Physics.IgnoreLayerCollision(6, 8);
-
+    
     _cInput = GetComponent<CharacterController>();
     _cMovement = GetComponent<ThirdPersonController>();
     swinging = false;
@@ -44,12 +44,12 @@ public class GrapplingGun : MonoBehaviour
   private void Update()
   {
 
-    if (Input.GetKeyDown(KeyCode.E))
+    if (Input.GetKeyDown(KeyCode.G))
     {
       rbParent.transform.parent = null;
       StartGrapple();
     }
-    else if (Input.GetKeyUp(KeyCode.E))
+    else if (Input.GetKeyUp(KeyCode.G))
     {
       StopGrapple();
       rb.transform.position = gunTip.transform.position;
