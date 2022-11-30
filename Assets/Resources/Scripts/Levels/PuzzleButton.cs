@@ -13,6 +13,7 @@ public class PuzzleButton : MonoBehaviour, IDamageable
     {
         if (HaveCounted == false)
         {
+            Debug.Log("BUTTON HIT CURRENT COUNT");
             HaveCounted = true;
             Handler.GetComponent<PuzzleDoor>().AddCount(); 
         }
