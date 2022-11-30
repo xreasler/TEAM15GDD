@@ -3,20 +3,25 @@ using UnityEngine.InputSystem;
 
 public class Crossbow : MonoBehaviour
 {
-    public float damage;
     public float range;
+    [SerializeField] private float shootCD;
+    private bool _readyToShoot = true;
+    
+    public enum TargetTag{ Player,Enemy }
+
+    public TargetTag targetTag;
     
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
 
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             Shoot();
         }
     }
 
-    void Shoot()
+    private void Shoot()
     {
         RaycastHit hit;
         
@@ -24,15 +29,23 @@ public class Crossbow : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(crossHairPoint);
         
         
-        if (Physics.Raycast(ray, out hit, range))
+        if (Physics.Raycast(ray, out hit, range) && _readyToShoot == true)
         {
-            Debug.Log(hit.transform.name);
+            Debug.Log("Current Target set to  " + targetTag);
+            _readyToShoot = false;
 
-            Target target = hit.transform.GetComponent<Target>();
-            if (target != null)
+            IDamageable currenTarget = hit.collider.gameObject.GetComponent<IDamageable>();
+            if (currenTarget != null)
             {
-                target.TakeDamage(damage);
+                currenTarget.Damage();
+                Debug.Log("Attacking  "+ targetTag +"  Remaining HP:  " + currenTarget.Health);
+                Invoke("Reload", shootCD);
             }
         }
     }
+    private void Reload()
+    {
+        _readyToShoot = true;
+    }
+    
 }
