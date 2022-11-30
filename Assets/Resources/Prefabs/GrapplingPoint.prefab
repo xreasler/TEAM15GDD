@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 2177129557577618939}
   - component: {fileID: 2177129557576816093}
   - component: {fileID: 2177129557575849757}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SwitchCrystal
   m_TagString: Untagged
   m_Icon: {fileID: 0}

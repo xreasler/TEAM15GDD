@@ -115,6 +115,7 @@ public class enemy : MonoBehaviour, IDamageable
        // m_myWeapon.SetOwner(gameObject);
         AggroUse = false;
         Health = _health;
+        player = GameObject.Find("PlayerArmature").transform;
 
     }
 
