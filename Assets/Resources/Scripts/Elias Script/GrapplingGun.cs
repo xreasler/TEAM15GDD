@@ -75,6 +75,7 @@ public class GrapplingGun : MonoBehaviour
 
     if (Physics.Raycast(ray, out hit, grappleLenght, grappleLayer))
     {
+      rbParent.SetActive(true);
       _grapplePoint = hit.point;
       _joint = player.AddComponent<SpringJoint>();
       _joint.autoConfigureConnectedAnchor = false;
@@ -97,7 +98,6 @@ public class GrapplingGun : MonoBehaviour
       _cMovement.Gravity = 0;
       _cInput.enabled = false;
       
-      
       gameObject.transform.parent = rbParent.transform;
     }
   }
@@ -113,6 +113,7 @@ public class GrapplingGun : MonoBehaviour
   
   private void StopGrapple()
   {
+    rbParent.SetActive(false);
     gameObject.transform.parent = null;
     
     _lr.positionCount = 0;
