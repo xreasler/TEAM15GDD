@@ -121,6 +121,12 @@ namespace StarterAssets
 
         private bool _hasAnimator;
         private bool _nextCombo;
+        
+        [SerializeField] 
+        private AudioSource jumpSoundEffect; 	
+        	
+        private GrapplingGun _grapplingGun;	
+
 
         private bool IsCurrentDeviceMouse
         {
@@ -153,6 +159,7 @@ namespace StarterAssets
             _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
             _playerInput = GetComponent<PlayerInput>();
+            _grapplingGun = GetComponent<GrapplingGun>();
             weapon.SetActive(false);
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
@@ -172,8 +179,12 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
-            Move();
             Attack();
+            if (_grapplingGun.swinging == false)	
+            {	
+                Move();	
+            }	
+
         }
 
         private void LateUpdate()
@@ -319,6 +330,9 @@ namespace StarterAssets
                 // Jump
                 if (_input.jump && _jumpTimeoutDelta <= 0.0f)
                 {
+                    //AudioSource.PlayClipAtPoint(jumpSoundEffect, transform.TransformPoint(_controller.center), FootstepAudioVolume);	
+                    Debug.Log("Played sound");	
+                    jumpSoundEffect.Play ();
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
 
