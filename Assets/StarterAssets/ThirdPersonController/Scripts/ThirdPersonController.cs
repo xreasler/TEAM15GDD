@@ -12,7 +12,7 @@ namespace StarterAssets
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
     [RequireComponent(typeof(PlayerInput))]
 #endif
-    public class ThirdPersonController : MonoBehaviour
+    public class ThirdPersonController : MonoBehaviour, IDamageable
     {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
@@ -74,6 +74,14 @@ namespace StarterAssets
 
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
+        
+        private bool swapAttack;
+        public GameObject weapon;
+
+        public float Health { get; set; }
+
+        [SerializeField]
+        private float _health;
 
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -86,6 +94,7 @@ namespace StarterAssets
         private float _rotationVelocity;
         private float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
+        
 
         // timeout deltatime
         private float _jumpTimeoutDelta;
@@ -97,6 +106,8 @@ namespace StarterAssets
         private int _animIDJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
+        private int _animIDMeleeAttack;
+        private int _animIDMeleeCombo;
 
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
         private PlayerInput _playerInput;
@@ -109,10 +120,13 @@ namespace StarterAssets
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
-
-        [SerializeField] private AudioSource jumpSoundEffect; 
+        private bool _nextCombo;
         
-        private GrapplingGun _grapplingGun;
+        [SerializeField] 
+        private AudioSource jumpSoundEffect; 	
+        	
+        private GrapplingGun _grapplingGun;	
+
 
         private bool IsCurrentDeviceMouse
         {
@@ -138,8 +152,6 @@ namespace StarterAssets
 
         private void Start()
         {
-            _grapplingGun = GetComponent<GrapplingGun>();
-            
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
             
             _hasAnimator = TryGetComponent(out _animator);
@@ -147,6 +159,8 @@ namespace StarterAssets
             _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
             _playerInput = GetComponent<PlayerInput>();
+            _grapplingGun = GetComponent<GrapplingGun>();
+            weapon.SetActive(false);
 #else
 			Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
@@ -156,6 +170,7 @@ namespace StarterAssets
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+            Health = _health;
         }
 
         private void Update()
@@ -164,12 +179,12 @@ namespace StarterAssets
 
             JumpAndGravity();
             GroundedCheck();
-            
-            if (_grapplingGun.swinging == false)
-            {
-                Move();
-            }
-            
+            Attack();
+            if (_grapplingGun.swinging == false)	
+            {	
+                Move();	
+            }	
+
         }
 
         private void LateUpdate()
@@ -184,6 +199,8 @@ namespace StarterAssets
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            _animIDMeleeAttack = Animator.StringToHash("MeleeAttack");
+            _animIDMeleeCombo = Animator.StringToHash("NextCombo");
         }
 
         private void GroundedCheck()
@@ -290,10 +307,8 @@ namespace StarterAssets
             }
         }
 
-        
         private void JumpAndGravity()
         {
-            
             if (Grounded)
             {
                 // reset the fall timeout timer
@@ -306,6 +321,7 @@ namespace StarterAssets
                     _animator.SetBool(_animIDFreeFall, false);
                 }
 
+                // stop our velocity dropping infinitely when grounded
                 if (_verticalVelocity < 0.0f)
                 {
                     _verticalVelocity = -2f;
@@ -314,11 +330,9 @@ namespace StarterAssets
                 // Jump
                 if (_input.jump && _jumpTimeoutDelta <= 0.0f)
                 {
-                    //AudioSource.PlayClipAtPoint(jumpSoundEffect, transform.TransformPoint(_controller.center), FootstepAudioVolume);
-                    Debug.Log("Played sound");
+                    //AudioSource.PlayClipAtPoint(jumpSoundEffect, transform.TransformPoint(_controller.center), FootstepAudioVolume);	
+                    Debug.Log("Played sound");	
                     jumpSoundEffect.Play ();
-
-
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
 
@@ -365,6 +379,15 @@ namespace StarterAssets
             }
         }
 
+        public void AttackAndSlash()
+        {
+            if (_hasAnimator)
+            {
+                _animator.SetTrigger(_animIDMeleeAttack);
+                
+            }  
+        }
+
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
             if (lfAngle < -360f) lfAngle += 360f;
@@ -403,6 +426,53 @@ namespace StarterAssets
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+            }
+        }
+
+        public void returnWeapon()
+        {
+            weapon.SetActive(false);
+        }
+
+        public void Attack()
+        {
+            if (Input.GetMouseButtonDown(0) && swapAttack)
+            {
+               weapon.SetActive(true);
+                swapAttack = !swapAttack;
+                _animator.Play("Attack");
+                Invoke("returnWeapon",2 );
+
+
+            }
+            if (Input.GetMouseButtonDown(0) && !swapAttack)
+            {
+                weapon.SetActive(true);
+                swapAttack = !swapAttack;
+                _animator.Play("Attack2");
+                Invoke("returnWeapon",2 );
+
+
+            }
+            
+            
+        }
+
+        
+
+        public void Damage()
+        {
+            
+            Health--;
+            //Debug.Log("MY CURRENT HP " + Health);
+            if (Health == 0)
+            {
+                if (gameObject != null)
+                {
+                    Destroy(gameObject);
+                }
+                
+                
             }
         }
     }
