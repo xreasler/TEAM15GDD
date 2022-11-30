@@ -1,14 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Crossbow : MonoBehaviour
 {
-    public float damage = 10f;
-    public float range = 100f;
-
-    public Camera PlayerCam;
-
+    public float damage;
+    public float range;
+    
     // Update is called once per frame
     void Update()
     {
@@ -22,7 +19,12 @@ public class Crossbow : MonoBehaviour
     void Shoot()
     {
         RaycastHit hit;
-        if (Physics.Raycast(PlayerCam.transform.position, PlayerCam.transform.forward, out hit, range))
+        
+        Vector3 crossHairPoint = new Vector3(Screen.width / 2f - 30f, Screen.height / 2f + 30f, 0f);
+        Ray ray = Camera.main.ScreenPointToRay(crossHairPoint);
+        
+        
+        if (Physics.Raycast(ray, out hit, range))
         {
             Debug.Log(hit.transform.name);
 

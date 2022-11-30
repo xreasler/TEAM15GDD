@@ -1,17 +1,17 @@
-using System;
 using Unity.VisualScripting;
 using StarterAssets;
 using UnityEngine;
 
 public class GrapplingGun : MonoBehaviour
 {
-  private LineRenderer lr;
-  private Vector3 grapplePoint;
-  [SerializeField] private LayerMask grappleLayer = new LayerMask();
+  private LineRenderer _lr;
+  private Vector3 _grapplePoint;
+  [SerializeField] private LayerMask grappleLayer;
   [SerializeField] private Transform gunTip, player;
   [SerializeField] private float grappleLenght;
-  private SpringJoint Joint;
-  
+  private SpringJoint _joint;
+
+  private CharacterController _cInput;
   private ThirdPersonController _cMovement;
   [SerializeField] private Transform grappleIndicatorPos;
   [SerializeField] private GameObject grappleIndicator;
@@ -20,19 +20,22 @@ public class GrapplingGun : MonoBehaviour
   [SerializeField] private GameObject rbParent;
 
 
-  [SerializeField] private float spring = 0;
-  [SerializeField] private float damper = 0;
-  [SerializeField] private float massScale = 0;
+  [SerializeField] private float spring;
+  [SerializeField] private float damper;
+  [SerializeField] private float massScale;
 
   public bool swinging;
+  
 
   private void Awake()
   {
-    lr = GetComponent<LineRenderer>();
+    _lr = GetComponent<LineRenderer>();
     
     Physics.IgnoreLayerCollision(6, 8);
-    
+
+    _cInput = GetComponent<CharacterController>();
     _cMovement = GetComponent<ThirdPersonController>();
+    swinging = false;
   }
 
 
@@ -41,13 +44,16 @@ public class GrapplingGun : MonoBehaviour
   private void Update()
   {
 
-    if (Input.GetMouseButtonDown(0))
+    if (Input.GetKeyDown(KeyCode.E))
     {
+      rbParent.transform.parent = null;
       StartGrapple();
     }
-    else if (Input.GetMouseButtonUp(0))
+    else if (Input.GetKeyUp(KeyCode.E))
     {
       StopGrapple();
+      rb.transform.position = gunTip.transform.position;
+      rbParent.transform.parent = gameObject.transform;
     }
 
     CanGrapple();
@@ -69,45 +75,53 @@ public class GrapplingGun : MonoBehaviour
 
     if (Physics.Raycast(ray, out hit, grappleLenght, grappleLayer))
     {
-      grapplePoint = hit.point;
-      Joint = player.AddComponent<SpringJoint>();
-      Joint.autoConfigureConnectedAnchor = false;
-      Joint.connectedAnchor = grapplePoint;
+      _grapplePoint = hit.point;
+      _joint = player.AddComponent<SpringJoint>();
+      _joint.autoConfigureConnectedAnchor = false;
+      _joint.connectedAnchor = _grapplePoint;
 
-      float distanceFromPoint = Vector3.Distance(player.position, grapplePoint);
+      float distanceFromPoint = Vector3.Distance(player.position, _grapplePoint);
 
-      Joint.maxDistance = distanceFromPoint * 0.2f;
-      Joint.minDistance = distanceFromPoint * 0.1f;
+      _joint.maxDistance = distanceFromPoint * 0.2f;
+      _joint.minDistance = distanceFromPoint * 0.1f;
 
 
-      Joint.spring = spring;
-      Joint.damper = damper;
-      Joint.massScale = massScale;
+      _joint.spring = spring;
+      _joint.damper = damper;
+      _joint.massScale = massScale;
 
-      lr.positionCount = 2;
+      _lr.positionCount = 2;
       
-      _cMovement.enabled = false;
       rb.useGravity = true;
+      swinging = true;
+      _cMovement.Gravity = 0;
+      _cInput.enabled = false;
+      
+      
       gameObject.transform.parent = rbParent.transform;
     }
   }
 
   private void DrawRope()
   {
-    if(!Joint)
+    if(!_joint)
       return;
     
-    lr.SetPosition(0, gunTip.position);
-    lr.SetPosition(1, grapplePoint);
+    _lr.SetPosition(0, gunTip.position);
+    _lr.SetPosition(1, _grapplePoint);
   }
   
   private void StopGrapple()
   {
     gameObject.transform.parent = null;
-    lr.positionCount = 0;
-    Destroy(Joint);
-    _cMovement.enabled = true;
+    
+    _lr.positionCount = 0;
+    Destroy(_joint);
     rb.useGravity = false;
+    swinging = false;
+    _cMovement.Gravity = -15f;
+    rb.velocity = new Vector3(0, 0, 0);
+    _cInput.enabled = true;
   }
 
 
