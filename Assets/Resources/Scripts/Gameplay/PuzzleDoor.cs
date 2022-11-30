@@ -9,7 +9,7 @@ public class PuzzleDoor : MonoBehaviour
 
     public Transform _targetDoor;
 
-    // public Transform _targetCrystal;
+    public Transform _targetCrystal;
     //
     // public Transform _targetLight;
     // public Transform _targetLight2;
@@ -30,9 +30,10 @@ public class PuzzleDoor : MonoBehaviour
     {
         if (intCount == 5)
         {
-           // _targetCrystal.GetComponent<MiscSetup>().swapMat();
-           // _targetDoor.GetComponent<MiscSetup>().swapMat();
-            _targetDoor.GetComponent<MiscSetup>().Open();
+             _targetCrystal.GetComponent<MiscSetup>().swapMat(); 
+             _targetDoor.GetComponent<MiscSetup>().swapMat();
+            
+             _targetDoor.GetComponent<MiscSetup>().Open();
             //_targetLight.GetComponent<MiscSetup>().SwapLight();
             //_targetLight2.GetComponent<MiscSetup>().SwapLight();
              
