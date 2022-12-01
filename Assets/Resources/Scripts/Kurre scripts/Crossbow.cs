@@ -15,33 +15,37 @@ public class Crossbow : MonoBehaviour
     private void Update()
     {
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F) && _readyToShoot)
         {
             Shoot();
+        }
+        else if (Input.GetKeyDown(KeyCode.F) && !_readyToShoot)
+        {
+            Debug.Log("reloading");
         }
     }
 
     private void Shoot()
     {
+        _readyToShoot = false;
         RaycastHit hit;
         
         Vector3 crossHairPoint = new Vector3(Screen.width / 2f - 30f, Screen.height / 2f + 30f, 0f);
         Ray ray = Camera.main.ScreenPointToRay(crossHairPoint);
         
         
-        if (Physics.Raycast(ray, out hit, range) && _readyToShoot == true)
+        if (Physics.Raycast(ray, out hit, range))
         {
             Debug.Log("Current Target set to  " + targetTag);
-            _readyToShoot = false;
 
             IDamageable currenTarget = hit.collider.gameObject.GetComponent<IDamageable>();
             if (currenTarget != null)
             {
                 currenTarget.Damage();
                 Debug.Log("Attacking  "+ targetTag +"  Remaining HP:  " + currenTarget.Health);
-                Invoke("Reload", shootCD);
             }
         }
+        Invoke("Reload", shootCD);
     }
     private void Reload()
     {
