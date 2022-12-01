@@ -2775,7 +2775,7 @@ MonoBehaviour:
   BackStepAudio: {fileID: 318514457009259012}
   Aggro: {fileID: 8300000, guid: ea6aaa7005245c44f9c8961767bffc57, type: 3}
   HitClip: {fileID: 8300000, guid: aa6037558fbf6644c9d06ea3a3cd035e, type: 3}
-  _health: 5
+  _health: 2
 --- !u!136 &318514458070954035
 CapsuleCollider:
   m_ObjectHideFlags: 0

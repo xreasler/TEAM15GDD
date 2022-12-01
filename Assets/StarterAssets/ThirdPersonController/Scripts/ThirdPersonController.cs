@@ -81,7 +81,7 @@ namespace StarterAssets
         public float Health { get; set; }
 
         [SerializeField]
-        private float _health;
+        public float _health;
 
         // cinemachine
         private float _cinemachineTargetYaw;
@@ -331,7 +331,7 @@ namespace StarterAssets
                 if (_input.jump && _jumpTimeoutDelta <= 0.0f)
                 {
                     //AudioSource.PlayClipAtPoint(jumpSoundEffect, transform.TransformPoint(_controller.center), FootstepAudioVolume);	
-                    Debug.Log("Played sound");	
+                    	
                     jumpSoundEffect.Play ();
                     // the square root of H * -2 * G = how much velocity needed to reach desired height
                     _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);

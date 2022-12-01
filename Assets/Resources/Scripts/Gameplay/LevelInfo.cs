@@ -6,22 +6,25 @@ using UnityEngine;
 
 public class LevelInfo : MonoBehaviour
 {
-    
-    
 
-    [TextArea(3,10)]
-    public string Input = "";
+
+
+    
 
     public TMP_Text txtguide;
-    
     public GameObject canvas;
-
+    public GameObject parentHelper;
     public bool Itriggered;
+    public int indexNumber;
+
+    
 
     void Start()
     {
         
-        canvas.SetActive(false); 
+        parentHelper = GameObject.Find("HELPER");
+        canvas.SetActive(false);
+       
 
     }
 
@@ -29,8 +32,10 @@ public class LevelInfo : MonoBehaviour
     void Update()
     {
 
-        txtguide.text = Input;
-        txtguide.ForceMeshUpdate(true);
+       
+       
+
+
 
 
     }
@@ -40,9 +45,11 @@ public class LevelInfo : MonoBehaviour
     {
         if (other.CompareTag("Player") && Itriggered == false)
         {
+
+            txtguide.SetText(parentHelper.GetComponent<Phrases>().textInput[indexNumber], false);
+            Debug.Log(txtguide);
             Itriggered = true;
             txtguide.ForceMeshUpdate(true);
-            txtguide.text = txtguide.ToString();
             canvas.SetActive(true);  
             
         }
@@ -53,9 +60,17 @@ public class LevelInfo : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-           
+            
+            txtguide.ForceMeshUpdate(true);
             canvas.SetActive(false);  
+            
             
         }
     }
+
+    
+    
+    
+    
+    
 }
