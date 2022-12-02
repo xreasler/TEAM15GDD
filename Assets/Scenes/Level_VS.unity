@@ -27727,6 +27727,18 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 692745752109020413, guid: a8befdf1b99fd634aac8ad129db79a0f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.011
+      objectReference: {fileID: 0}
+    - target: {fileID: 692745752109020413, guid: a8befdf1b99fd634aac8ad129db79a0f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.566
+      objectReference: {fileID: 0}
+    - target: {fileID: 692745752109020413, guid: a8befdf1b99fd634aac8ad129db79a0f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.015
+      objectReference: {fileID: 0}
     - target: {fileID: 1122341730511826346, guid: a8befdf1b99fd634aac8ad129db79a0f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.5
@@ -27802,6 +27814,14 @@ PrefabInstance:
     - target: {fileID: 5497308269492267623, guid: a8befdf1b99fd634aac8ad129db79a0f, type: 3}
       propertyPath: m_Name
       value: NestedParentArmature_Unpack
+      objectReference: {fileID: 0}
+    - target: {fileID: 7133154799450528211, guid: a8befdf1b99fd634aac8ad129db79a0f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7920791369331533076, guid: a8befdf1b99fd634aac8ad129db79a0f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8002499204489873029, guid: a8befdf1b99fd634aac8ad129db79a0f, type: 3}
       propertyPath: m_LocalPosition.x
