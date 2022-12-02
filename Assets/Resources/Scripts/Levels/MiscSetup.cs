@@ -54,7 +54,7 @@ public class MiscSetup : MonoBehaviour
             if (i == 0)
             {
                 rend.sharedMaterial = mainMat[0];
-                i++;
+                i++; 
             }
             else if (i == 1)
             {
@@ -78,7 +78,9 @@ public class MiscSetup : MonoBehaviour
         {
             DoorTriggered = true;
             StartCoroutine(DoorSlide()); 
+       
         } 
+
         
         
     }
@@ -89,11 +91,11 @@ public class MiscSetup : MonoBehaviour
 
          float t = 0;
 
-         
+         FindObjectOfType<AudioManager>().Play("DoorOpens");
 
-         
 
-         while (t < slideTime)
+
+        while (t < slideTime)
 
          {
 

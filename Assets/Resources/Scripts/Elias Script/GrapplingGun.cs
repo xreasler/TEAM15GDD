@@ -48,7 +48,7 @@ public class GrapplingGun : MonoBehaviour
     {
       rbParent.transform.parent = null;
       StartGrapple();
-    }
+     }
     else if (Input.GetKeyUp(KeyCode.G))
     {
       StopGrapple();
@@ -65,9 +65,11 @@ public class GrapplingGun : MonoBehaviour
   }
 
 
+
   private void StartGrapple()
   {
-    RaycastHit hit;
+        FindObjectOfType<AudioManager>().Play("GrapplingHook");
+        RaycastHit hit;
     
     Vector3 crossHairPoint = new Vector3(Screen.width / 2f - 30f, Screen.height / 2f + 30f, 0f);
     Ray ray = Camera.main.ScreenPointToRay(crossHairPoint);

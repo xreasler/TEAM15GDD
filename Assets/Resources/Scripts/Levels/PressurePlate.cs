@@ -15,7 +15,9 @@ public class PressurePlate : MonoBehaviour
     public Transform _targetLight2;
     public Transform _targetLight3;
     public Transform _targetLight4;
+
     
+
     public static readonly int hashActivated = Animator.StringToHash("Triggered");
 
     private void Start()
@@ -34,7 +36,9 @@ public class PressurePlate : MonoBehaviour
         _targetLight2.GetComponent<MiscSetup>().SwapLight();
         _targetLight3.GetComponent<MiscSetup>().SwapLight();
         _targetLight4.GetComponent<MiscSetup>().SwapLight();
-        
-        
+     
+
+
+
     }
 }
